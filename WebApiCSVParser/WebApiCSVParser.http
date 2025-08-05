@@ -1,0 +1,6 @@
+@WebApiCSVParser_HostAddress = http://localhost:5211
+
+GET {{WebApiCSVParser_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
