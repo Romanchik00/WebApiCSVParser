@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApiCSVParser.Models
 {
-    [Table("Results")]
+    [Table("results")]
     public class Result
     {
         [Column("id"), Key]
@@ -27,19 +27,4 @@ namespace WebApiCSVParser.Models
         [Column("max_value")]
         public double MaxValue {  get; set; }
     }
-
-    //public class ResultDbContext : DbContext
-    //{
-    //    public ResultDbContext(DbContextOptions<ResultDbContext> options) : base(options) { }
-
-    //    public DbSet<Result> Results => Set<Result>();
-
-    //    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    //    {
-    //        // Создаем уникальный индекс на поле FileName
-    //        modelBuilder.Entity<Result>()
-    //            .HasIndex(v => v.FileName)
-    //            .IsUnique();
-    //    }
-    //}
 }
