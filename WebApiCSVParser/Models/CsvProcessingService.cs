@@ -14,6 +14,12 @@ namespace WebApiCSVParser.Models
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext)); // !!! DangerZone !!!
         }
 
+        /// <summary>
+        /// Метод, парсящий csv-файл
+        /// </summary>
+        /// <param name="CSV"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
         private IResult CsvTryParse(IFormFile CSV, out CsvData? data)
         {
             var newData = new CsvData();
@@ -63,6 +69,11 @@ namespace WebApiCSVParser.Models
             }
         }
 
+        /// <summary>
+        /// Метод, отправляющий распарсенные данные в базу
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
         public async Task<IResult> ProcessCsvFile(IFormFile file) // Возвращает Task, а не IActionResult
         {
             // ... (валидация файла, парсинг CSV в List<Value>) ...
@@ -139,6 +150,13 @@ namespace WebApiCSVParser.Models
             }
         }
 
+        /// <summary>
+        /// Расчёт Result из новой Value
+        /// </summary>
+        /// <param name="values"></param>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         private Result CalculateResultData(List<Value> values, string fileName)
         {
             if (values == null || values.Count == 0)
@@ -187,6 +205,12 @@ namespace WebApiCSVParser.Models
                 MaxValue = maxValue
             };
         }
+
+        /// <summary>
+        /// Получает из базы, сортирует и передает последние 10 значений из таблицы Values в виде строк (в обратном порядке)
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
         public IEnumerable<string> LastValues(string filename)
         {
             IEnumerable<string> vals = (
@@ -197,31 +221,64 @@ namespace WebApiCSVParser.Models
                 .AsEnumerable().Take(10);
             return vals;     
         }
-        /*
-        Id { get; set; }
 
-        FileName { get; set; }
+        //public IEnumerable<string> ResultByName(string name)
+        //{
+        //    var res = from el in _dbContext.Results 
+        //              where el.FileName == name 
+        //              select $"{el.Id};{el.FileName};{el.SecDeltaDate};{el.MinDate};{el.AvgExecutionTime};{el.AvgValue};{el.MedianValue};{el.MinValue};{el.MaxValue}";
+        //    return res;
+        //}
 
-        SecDeltaDate {  get; set; }
+        // Не осилил :(
+        //public async Task<List<Result>> GetFilteredResults(
+        //    string? fileName = null,
+        //    DateTime? startTimeFrom = null,
+        //    DateTime? startTimeTo = null,
+        //    double? averageFrom = null,
+        //    double? averageTo = null,
+        //    double? executionTimeFrom = null,
+        //    double? executionTimeTo = null)
+        //{
+        //    IQueryable<Result> query = _dbContext.Results;
 
-        MinDate {  get; set; }
+        //    // Фильтр по имени файла
+        //    if (!string.IsNullOrEmpty(fileName))
+        //    {
+        //        query = query.Where(r => r.FileName == fileName);
+        //    }
 
-        AvgExecutionTime {  get; set; }
+        //    // Фильтр по времени запуска (диапазон)
+        //    if (startTimeFrom.HasValue)
+        //    {
+        //        query = query.Where(r => r.StartTime >= startTimeFrom.Value);
+        //    }
+        //    if (startTimeTo.HasValue)
+        //    {
+        //        query = query.Where(r => r.StartTime <= startTimeTo.Value);
+        //    }
 
-        AvgValue {  get; set; }
+        //    // Фильтр по среднему показателю (диапазон)
+        //    if (averageFrom.HasValue)
+        //    {
+        //        query = query.Where(r => r.Average >= averageFrom.Value);
+        //    }
+        //    if (averageTo.HasValue)
+        //    {
+        //        query = query.Where(r => r.Average <= averageTo.Value);
+        //    }
 
-        MedianValue {  get; set; }
- 
-        MinValue {  get; set; }
+        //    // Фильтр по времени выполнения (диапазон)
+        //    if (executionTimeFrom.HasValue)
+        //    {
+        //        query = query.Where(r => r.ExecutionTime >= executionTimeFrom.Value);
+        //    }
+        //    if (executionTimeTo.HasValue)
+        //    {
+        //        query = query.Where(r => r.ExecutionTime <= executionTimeTo.Value);
+        //    }
 
-        MaxValue {  get; set; }
-         */
-        public IEnumerable<string> ResultByName(string name)
-        {
-            var res = from el in _dbContext.Results 
-                      where el.FileName == name 
-                      select $"{el.Id};{el.FileName};{el.SecDeltaDate};{el.MinDate};{el.AvgExecutionTime};{el.AvgValue};{el.MedianValue};{el.MinValue};{el.MaxValue}";
-            return res;
-        }
+        //    return await query.ToListAsync();
+        //}
     }
 }

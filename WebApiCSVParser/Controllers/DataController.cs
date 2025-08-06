@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using WebApiCSVParser.Models;
 
@@ -18,6 +19,11 @@ namespace WebApiCSVParser.Controllers
             _csvProcessingService = csvProcessingService;
         }
 
+        /// <summary>
+        /// Метод передачи клиенту последних 10 значений из сортированного списка (в обратном порядке)
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         [HttpGet("values")]
         public IEnumerable<string> GetVal(string name)
         {
@@ -25,32 +31,18 @@ namespace WebApiCSVParser.Controllers
         }
 
         // GET api/<ApiController>/5
-        [HttpGet("results/{filename}")]
-        public IEnumerable<string> GetResByName(string filename)
-        {
-            return _csvProcessingService.ResultByName(filename);
-        }
-
-        //[HttpGet("results/")]
-        //public IEnumerable<string> GetResByDate(string date)
+        //[HttpGet("results/{filename}")]
+        //public IEnumerable<string> GetResByName(string filename)
         //{
-        //    return _csvProcessingService
+        //    return _csvProcessingService.ResultByName(filename);
         //}
+        
 
-        //[HttpGet("results/{}")]
-        //public IEnumerable<string> GetResByAvgVal(string filename)
-        //{
-        //    return _csvProcessingService
-        //}
-
-        //[HttpGet("results/{}")]
-        //public IEnumerable<string> GetResByAvgExecTime(string filename)
-        //{
-        //    return _csvProcessingService
-        //}
-
-
-        // POST api/data/up
+        /// <summary>
+        /// Метод загрузки csv-файлов на сервер и добавлению в базу данных
+        /// </summary>
+        /// <param name="CSV"></param>
+        /// <returns></returns>
         [HttpPost("upload")]
         public async Task<IActionResult> Post(IFormFile CSV)
         {
@@ -64,17 +56,5 @@ namespace WebApiCSVParser.Controllers
                 return BadRequest(answer);
             }
         }
-
-        // PUT api/<ApiController>/5
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromBody] string value)
-        //{
-        //}
-
-        // DELETE api/<ApiController>/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
     }
 }
