@@ -13,6 +13,17 @@
 ## Настройка перед работой
 ### Скорее всего потребуется изменить конфигурацию : файла appsettings.json в строке ConnectionString под своё окружение
 ### Возможно потребуется сделать в .net cli миграцию : dotnet ef migrations add init --context models/appdbcontext --project webapicsvparser.csproj --startup-project webapicsvparser.csproj
+### Вероятно потребуется установить через NuGet некоторые из перечисленых пакетов:
+- Microsoft.AspNetCore.OpenApi
+- Microsoft.EntityFrameworkCore
+- Microsoft.EntityFrameworkCore.Design
+- Microsoft.EntityFrameworkCore.Tools
+- Npgsql
+- Npgsql.EntityFrameworkCore.PostgreSQL
+- Npgsql.Json.NET
+- Swashbuckle.AspNetCore.Swagger
+- Swashbuckle.AspNetCore.SwaggerGen
+- Swashbuckle.AspNetCore.SwaggerUI
 
 ## Используемые технологии
 - .NET 9
