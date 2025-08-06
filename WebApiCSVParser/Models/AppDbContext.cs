@@ -12,7 +12,7 @@ namespace WebApiCSVParser.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Result>()
-                .HasIndex(r => r.FileName) // Здесь создаем уникальный индекс для FileName в таблице Results
+                .HasIndex(r => r.FileName)
                 .IsUnique();
         }
     }

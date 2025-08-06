@@ -36,7 +36,31 @@ namespace WebApiCSVParser.Controllers
         //{
         //    return _csvProcessingService.ResultByName(filename);
         //}
-        
+
+        /// <summary>
+        /// Метод возвращает фильтрованный или пустой список строк из таблицы Results.
+        /// В качестве фильтров используются: имя файла, диапозоны для времени старта первой операции, среднего показателя и среднего времени выполнения 
+        /// </summary>
+        /// <param name="File">Имя файла</param>
+        /// <param name="startTimeFrom">Нижний порог даты выполнения первой операции</param>
+        /// <param name="startTimeTo">Верхний порог даты выполнения первой операции</param>
+        /// <param name="AvgValFrom">Нижний порог среднего значения</param>
+        /// <param name="AvgValTo">Верхний порог среднего значения</param>
+        /// <param name="AvgExectTimeFrom">Нижний порог времени выполнения</param>
+        /// <param name="AvgExectTimeTo">Верхний порог времени выполнения</param>
+        /// <returns></returns>
+        [HttpGet("results")]
+        public IEnumerable<Result> GetFilteredResult(
+            string? File = null,
+            DateTime? startTimeFrom = null,
+            DateTime? startTimeTo = null,
+            double? AvgValFrom = null,
+            double? AvgValTo = null,
+            double? AvgExectTimeFrom = null,
+            double? AvgExectTimeTo = null) 
+        {
+            return _csvProcessingService.GetFilteredResults(File, startTimeFrom, startTimeTo, AvgValFrom, AvgValTo, AvgExectTimeFrom, AvgExectTimeTo);
+        }
 
         /// <summary>
         /// Метод загрузки csv-файлов на сервер и добавлению в базу данных

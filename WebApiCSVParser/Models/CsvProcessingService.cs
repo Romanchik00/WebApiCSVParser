@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
+using System.Linq;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WebApiCSVParser.Models
@@ -230,55 +231,73 @@ namespace WebApiCSVParser.Models
         //    return res;
         //}
 
-        // Не осилил :(
-        //public async Task<List<Result>> GetFilteredResults(
-        //    string? fileName = null,
-        //    DateTime? startTimeFrom = null,
-        //    DateTime? startTimeTo = null,
-        //    double? averageFrom = null,
-        //    double? averageTo = null,
-        //    double? executionTimeFrom = null,
-        //    double? executionTimeTo = null)
-        //{
-        //    IQueryable<Result> query = _dbContext.Results;
+        /// <summary>
+        /// Метод возвращает фильтрованный или пустой список строк из таблицы Results.
+        /// В качестве фильтров используются: имя файла, диапозоны для времени старта первой операции, среднего показателя и среднего времени выполнения 
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="startTimeFrom"></param>
+        /// <param name="startTimeTo"></param>
+        /// <param name="averageFrom"></param>
+        /// <param name="averageTo"></param>
+        /// <param name="executionTimeFrom"></param>
+        /// <param name="executionTimeTo"></param>
+        /// <returns></returns>
+        public IEnumerable<Result> GetFilteredResults(
+            string? fileName = null,
+            DateTime? startTimeFrom = null,
+            DateTime? startTimeTo = null,
+            double? averageFrom = null,
+            double? averageTo = null,
+            double? executionTimeFrom = null,
+            double? executionTimeTo = null)
+        {
+            IQueryable<Result> ResultQuery = _dbContext.Results;
+            IEnumerable<Value> Value = _dbContext.Values;
+            bool flag = false;
 
-        //    // Фильтр по имени файла
-        //    if (!string.IsNullOrEmpty(fileName))
-        //    {
-        //        query = query.Where(r => r.FileName == fileName);
-        //    }
+            // Фильтр по имени файла
+            if (!string.IsNullOrEmpty(fileName))
+            {
+                ResultQuery = ResultQuery.Where(r => r.FileName == fileName);
+                flag = true;
+            }
 
-        //    // Фильтр по времени запуска (диапазон)
-        //    if (startTimeFrom.HasValue)
-        //    {
-        //        query = query.Where(r => r.StartTime >= startTimeFrom.Value);
-        //    }
-        //    if (startTimeTo.HasValue)
-        //    {
-        //        query = query.Where(r => r.StartTime <= startTimeTo.Value);
-        //    }
+            // Фильтр по времени запуска (диапазон)
+            if (startTimeFrom.HasValue && startTimeTo.HasValue)
+            {
+                //query = query.Where(r => r.StartTime >= startTimeFrom.Value && r.StartTime <= startTimeTo.Value);
+                var ValuesGroups = (from el in Value group el by el.FileName);
+                var SortKeys = (from el in ValuesGroups where (el.First().Date >= startTimeFrom.Value && el.First().Date <= startTimeTo.Value) select el.Key);
 
-        //    // Фильтр по среднему показателю (диапазон)
-        //    if (averageFrom.HasValue)
-        //    {
-        //        query = query.Where(r => r.Average >= averageFrom.Value);
-        //    }
-        //    if (averageTo.HasValue)
-        //    {
-        //        query = query.Where(r => r.Average <= averageTo.Value);
-        //    }
+                ResultQuery = ResultQuery.Select(x => SortKeys.Contains(x.FileName) ? x : null);
+                ResultQuery =  from el in ResultQuery where SortKeys.Contains(el.FileName) select el;
+                flag = true;
+            }
 
-        //    // Фильтр по времени выполнения (диапазон)
-        //    if (executionTimeFrom.HasValue)
-        //    {
-        //        query = query.Where(r => r.ExecutionTime >= executionTimeFrom.Value);
-        //    }
-        //    if (executionTimeTo.HasValue)
-        //    {
-        //        query = query.Where(r => r.ExecutionTime <= executionTimeTo.Value);
-        //    }
+            // Фильтр по среднему показателю (диапазон)
+            if (averageFrom.HasValue && averageTo.HasValue)
+            {
+                ResultQuery = ResultQuery.Where(r => r.AvgValue >= averageFrom.Value && r.AvgValue <= averageTo.Value);
+                flag = true;
+            }
 
-        //    return await query.ToListAsync();
-        //}
+            // Фильтр по времени выполнения (диапазон)
+            if (executionTimeFrom.HasValue && executionTimeTo.HasValue)
+            {
+                ResultQuery = ResultQuery.Where(r => r.AvgExecutionTime >= executionTimeFrom.Value && r.AvgExecutionTime <= executionTimeTo.Value);
+                flag = true;
+            }
+
+            if (flag)
+            {
+                return ResultQuery.AsEnumerable();
+            }
+            else
+            {
+                return new List<Result>();
+            }
+
+        }
     }
 }
