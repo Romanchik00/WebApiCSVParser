@@ -11,8 +11,8 @@
 ### Для просмотра и использования, пользуйтесь swagger-ом (http(s):localhost:PORT/swagger) в режиме дебагера
 
 ## Настройка перед работой
-### Скорее всего потребуется ручками изменить конфигурацию файла appsettings.json в строке ConnectionString под своё окружение
-### Возможно потребуется самим сделать в .net cli миграцию dotnet ef migrations add init --context models/appdbcontext --project webapicsvparser.csproj --startup-project webapicsvparser.csproj
+### Скорее всего потребуется изменить конфигурацию : файла appsettings.json в строке ConnectionString под своё окружение
+### Возможно потребуется сделать в .net cli миграцию : dotnet ef migrations add init --context models/appdbcontext --project webapicsvparser.csproj --startup-project webapicsvparser.csproj
 
 ## Используемые технологии
 - .NET 9
